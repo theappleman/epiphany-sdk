@@ -652,10 +652,10 @@ then
     if [ "x${ds_build}" = "x" ]
     then
 	# Default install directory without datestamp
-	id_build="/opt/adapteva/esdk.${RELEASE}/tools/e-gnu.${build_arch}"
+	id_build="${basedir}/esdk.${RELEASE}/tools/e-gnu.${build_arch}"
     else
 	# Default install directory with datestamp
-	id_build="/opt/adapteva/esdk.${RELEASE}-${ds_build}/tools/e-gnu.${build_arch}"
+	id_build="${basedir}/esdk.${RELEASE}-${ds_build}/tools/e-gnu.${build_arch}"
     fi
 else
     if [ "x${ds_build}" = "x" ]
@@ -674,10 +674,10 @@ then
     if [ "x${ds_host}" = "x" ]
     then
 	# Default install directory without datestamp
-	id_host="/opt/adapteva/esdk.${RELEASE}/tools/e-gnu.${host_arch}"
+	id_host="${basedir}/esdk.${RELEASE}/tools/e-gnu.${host_arch}"
     else
 	# Default install directory with datestamp
-	id_host="/opt/adapteva/esdk.${RELEASE}-${ds_host}/tools/e-gnu.${host_arch}"
+	id_host="${basedir}/esdk.${RELEASE}-${ds_host}/tools/e-gnu.${host_arch}"
     fi
 else
     if [ "x${ds_host}" = "x" ]
