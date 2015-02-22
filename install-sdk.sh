@@ -361,7 +361,7 @@ else
     then
 	echo "Warning: Epiphany toolchain not in PATH. Will try to guess..."
 	# Assume tools are installed here. This is what build-toolchain.sh does
-	PATH="/opt/adapteva/esdk.${RELEASE}/tools/e-gnu.${build_arch}/bin:${PATH}"
+	PATH="${basedir}/esdk.${RELEASE}/tools/e-gnu.${build_arch}/bin:${PATH}"
     fi
 fi
 
