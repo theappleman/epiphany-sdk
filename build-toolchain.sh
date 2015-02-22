@@ -783,7 +783,6 @@ fi
 # override earlier items.
 
 # First the main components, which we *must* have.
-pushd src
 res="success"
 check_dir_exists "src/gcc" | res="failure"
 check_dir_exists "src/binutils" | res="failure"
@@ -850,8 +849,6 @@ if [ "${do_multicore_sim}" = "--multicore-sim" ]
 then
     check_dir_exists "src/gdb-multicore-sim" || res="failure"
 fi
-
-popd
 
 if [ "${res}" != "success" ]
 then
