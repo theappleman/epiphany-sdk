@@ -146,10 +146,11 @@ check_toolchain () {
 
 # Set the top level directory.
 d=`dirname "$0"`
+sdkdir=$(cd "$d" && pwd)
 basedir=`(cd "$d/.." && pwd)`
 
 # Set the release parameters
-. ${basedir}/sdk/define-release.sh
+. ${sdkdir}/define-release.sh
 
 # Set up a clean log
 logfile=${LOGDIR}/build-$(date -u +%F-%H%M).log
@@ -174,7 +175,7 @@ BSPS="zed_E16G3_512mb zed_E64G4_512mb parallella_E16G3_1GB"
 BSP="parallella_E16G3_1GB"
 
 # Default location of epiphany-libs.
-ESDK_LIBS="${basedir}/sdk/epiphany-libs"
+ESDK_LIBS="${sdkdir}/epiphany-libs"
 
 # The default branch for cloning/checkout
 BRANCH="master"
@@ -447,7 +448,7 @@ fi
 # TODO: Move to basedir
 autopull="--auto-pull"
 autocheckout="--auto-checkout"
-if ! ${basedir}/sdk/get-versions.sh ${basedir} sdk/sdk-components \
+if ! ${sdkdir}/get-versions.sh ${basedir} $(basename "$sdkdir")/sdk-components \
      ${logfile} ${auto_pull} ${auto_checkout} ${do_release}
 then
     echo "ERROR: Could not get correct versions of tools"
