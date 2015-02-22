@@ -114,7 +114,7 @@ do
     # Special case of some directories to ignore for some components
     case $component in
 	binutils)
-	    ignore="{ignore} gdb sim"
+	    ignore="${ignore} gdb sim"
 	    ;;
 
 	gdb)
