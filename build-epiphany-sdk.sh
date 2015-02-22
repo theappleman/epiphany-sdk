@@ -163,6 +163,9 @@ test "x$(basename "$sdkdir")" = "xsdk" || ln -sTf $sdkdir sdk
 
 pushd "$sdkdir" >& /dev/null
 
+# Create toolchain symbolic links (force overwrite if exists)
+ln -sTf "esdk.${RELEASE}" ${EPIPHANY_BUILD_HOME}/esdk
+
 if [ ! -d ../esdk/tools/${GNUNAME}/ ]; then
 	# Create the SDK tree
 	echo "Creating the eSDK directory tree..."
@@ -170,12 +173,10 @@ if [ ! -d ../esdk/tools/${GNUNAME}/ ]; then
 	mkdir -p ${ESDK} ${ESDK}/bsps ${ESDK}/tools
 	mkdir -p ${HOST}/lib ${HOST}/include ${HOST}/bin
 	mkdir -p ${GNU}
-fi
 
-# Create toolchain symbolic links (force overwrite if exists)
-ln -sTf "esdk.${RELEASE}" ${EPIPHANY_BUILD_HOME}/esdk
-ln -sTf ${HOSTNAME} ${ESDK}/tools/host
-ln -sTf ${GNUNAME}  ${ESDK}/tools/e-gnu
+	ln -sTf ${HOSTNAME} ${ESDK}/tools/host
+	ln -sTf ${GNUNAME}  ${ESDK}/tools/e-gnu
+fi
 
 
 # Sort out arg for Canadian cross
