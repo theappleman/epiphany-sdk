@@ -252,7 +252,7 @@ download_components() {
 " # We only want the newline character
 
     res="ok"
-    for line in `cat ${basedir}/sdk/toolchain-components | grep -v '^#' \
+    for line in `cat ${sdkdir}/toolchain-components | grep -v '^#' \
 		     | grep -v '^$'`
     do
 	tool=`          echo ${line} | cut -d ':' -f 1`
@@ -467,6 +467,7 @@ done
 # Move to basedir location
 
 d=`dirname "$0"`
+sdkdir=$(cd "$d" && pwd)
 basedir=`(cd "$d/.." && pwd)`
 if ! cd "${basedir}"
 then
@@ -475,7 +476,7 @@ then
 fi
 
 # Set the release parameters
-. ${basedir}/sdk/define-release.sh
+. ${sdkdir}/define-release.sh
 
 # Set up a log file
 log="${LOGDIR}/clone-$(date -u +%F-%H%M).log"
