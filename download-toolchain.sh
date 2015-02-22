@@ -248,8 +248,7 @@ download_components() {
     # TODO: Some components might be optional and unnecessary to download.
 
     OLD_IFS=${IFS}
-    IFS="
-" # We only want the newline character
+    IFS=$'\n' # We only want the newline character
 
     res="ok"
     for line in `cat ${basedir}/sdk/toolchain-components | grep -v '^#' \
