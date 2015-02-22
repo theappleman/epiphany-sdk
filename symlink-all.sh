@@ -126,7 +126,7 @@ do
 	    ;;
     esac
 
-    if ! ${basedir}/src/gcc/symlink-tree "${basedir}/src/${component}" "${ignore}" \
+    if ! ${basedir}/gcc/symlink-tree "${basedir}/${component}" "${ignore}" \
 	     >> ${logfile} 2>&1
     then
 	exit 1
