@@ -186,7 +186,7 @@ do
     fi
 
     # Select the tool dir
-    if ! cd ${basedir}/${tool}
+    if ! cd ${basedir}/src/${tool}
     then
 	logterm "ERROR (versions): No component directory for ${tool}"
 	status="1"
