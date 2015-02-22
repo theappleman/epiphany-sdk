@@ -251,8 +251,7 @@ download_components() {
     IFS=$'\n' # We only want the newline character
 
     res="ok"
-    for line in `cat ${basedir}/sdk/toolchain-components | grep -v '^#' \
-		     | grep -v '^$'`
+    egrep -v '^(#|$)' ${basedir}/sdk/toolchain-components | while read line
     do
 	tool=`          echo ${line} | cut -d ':' -f 1`
 	branch=`        echo ${line} | cut -d ':' -f 2`
