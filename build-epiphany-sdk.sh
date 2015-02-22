@@ -224,7 +224,7 @@ export PATH="${id_buildarch_toolchain}/bin:${PATH}"
 multicore_sim_str="--multicore-sim"
 
 if [ "$EPIPHANY_BUILD_TOOLCHAIN" != "no" ]; then
-	if ! ./download-toolchain.sh ${multicore_sim_str} ${do_release} --clone; then
+	if ! ./download-toolchain.sh ${do_release} --clone; then
 
 		printf "\nAborting...\n"
 		exit 1
