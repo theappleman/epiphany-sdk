@@ -786,11 +786,11 @@ fi
 # First the main components, which we *must* have.
 pushd src
 res="success"
-check_dir_exists "gcc" || res="failure"
-check_dir_exists "binutils" || res="failure"
-check_dir_exists "gdb" || res="failure"
-check_dir_exists "newlib" || res="failure"
-check_dir_exists "cgen" || res="failure"
+check_dir_exists "src/gcc" || res="failure"
+check_dir_exists "src/binutils" || res="failure"
+check_dir_exists "src/gdb" || res="failure"
+check_dir_exists "src/newlib" || res="failure"
+check_dir_exists "src/cgen" || res="failure"
 check_dir_exists "$(basename "$sdkdir")" || res="failure"
 
 component_dirs="newlib gdb cgen binutils gcc"
@@ -801,7 +801,7 @@ infra_exclude=""
 
 if [ "${do_gmp}" = "--do-gmp" ]
 then
-    check_dir_exists "gcc-infrastructure/gmp" || res="failure"
+    check_dir_exists "src/gcc-infrastructure/gmp" || res="failure"
     infra_dir="gcc-infrastructure"
 else
     infra_exclude="gmp ${infra_exclude}"
@@ -809,7 +809,7 @@ fi
 
 if [ "${do_mpfr}" = "--mpfr" ]
 then
-    check_dir_exists "gcc-infrastructure/mpfr" || res="failure"
+    check_dir_exists "src/gcc-infrastructure/mpfr" || res="failure"
     infra_dir="gcc-infrastructure"
 else
     infra_exclude="mpfr ${infra_exclude}"
@@ -817,7 +817,7 @@ fi
 
 if [ "${do_mpc}" = "--mpc" ]
 then
-    check_dir_exists "gcc-infrastructure/mpc" || res="failure"
+    check_dir_exists "src/gcc-infrastructure/mpc" || res="failure"
     infra_dir="gcc-infrastructure"
 else
     infra_exclude="mpc ${infra_exclude}"
@@ -825,7 +825,7 @@ fi
 
 if [ "${do_isl}" = "--isl" ]
 then
-    check_dir_exists "gcc-infrastructure/isl" || res="failure"
+    check_dir_exists "src/gcc-infrastructure/isl" || res="failure"
     infra_dir="gcc-infrastructure"
 else
     infra_exclude="isl ${infra_exclude}"
@@ -833,7 +833,7 @@ fi
 
 if [ "${do_cloog}" = "--cloog" ]
 then
-    check_dir_exists "gcc-infrastructure/cloog" || res="failure"
+    check_dir_exists "src/gcc-infrastructure/cloog" || res="failure"
     infra_dir="gcc-infrastructure"
 else
     infra_exclude="cloog ${infra_exclude}"
@@ -841,7 +841,7 @@ fi
 
 if [ "${do_ncurses}" = "--ncurses" ]
 then
-    check_dir_exists "gcc-infrastructure/ncurses" || res="failure"
+    check_dir_exists "src/gcc-infrastructure/ncurses" || res="failure"
     infra_dir="gcc-infrastructure"
 else
     infra_exclude="ncurses ${infra_exclude}"
@@ -849,7 +849,7 @@ fi
 
 if [ "${do_multicore_sim}" = "--multicore-sim" ]
 then
-    check_dir_exists "gdb-multicore-sim" || res="failure"
+    check_dir_exists "src/gdb-multicore-sim" || res="failure"
 fi
 
 popd
