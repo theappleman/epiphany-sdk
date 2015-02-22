@@ -159,6 +159,8 @@ echo ""
 
 cd $EPIPHANY_BUILD_HOME
 
+test "x$(basename "$sdkdir")" = "xsdk" || ln -sTf $sdkdir sdk
+
 pushd "$sdkdir" >& /dev/null
 
 if [ ! -d ../esdk/tools/${GNUNAME}/ ]; then
