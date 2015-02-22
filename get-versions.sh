@@ -127,7 +127,7 @@ done
 # Set the release parameters
 if [ "x--release" = "x${release}" ]
 then
-    . ${basedir}/sdk/define-release.sh
+    . ${basedir}/$(dirname "$componentfile")/define-release.sh
 fi
 
 
