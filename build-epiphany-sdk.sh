@@ -102,6 +102,7 @@ fi
 
 # Define the basedir
 d=`dirname "$0"`
+sdkdir=$(cd "$d" && pwd)
 basedir=`(cd "$d/.." && pwd)`
 
 
@@ -123,7 +124,7 @@ fi
 if [ "x--release" = "x${do_release}" ]
 then
 	# Set the release parameters
-	. ${basedir}/sdk/define-release.sh
+	. ${sdkdir}/define-release.sh
 	BRANCH=${RELEASE_TAG}
 else
 	RELEASE=${REV}
@@ -158,7 +159,7 @@ echo ""
 
 cd $EPIPHANY_BUILD_HOME
 
-pushd sdk >& /dev/null
+pushd "$sdkdir" >& /dev/null
 
 if [ ! -d ../esdk/tools/${GNUNAME}/ ]; then
 	# Create the SDK tree
