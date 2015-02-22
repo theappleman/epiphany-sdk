@@ -387,10 +387,11 @@ failedbuild () {
 
 # Define the basedir
 d=`dirname "$0"`
+sdkdir=$(cd "$d" && pwd)
 basedir=`(cd "$d/.." && pwd)`
 
 # Set the release parameters
-. ${basedir}/sdk/define-release.sh
+. ${sdkdir}/define-release.sh
 
 # Set up a clean log
 logfile=${LOGDIR}/build-$(date -u +%F-%H%M).log
@@ -790,7 +791,7 @@ check_dir_exists "binutils" | res="failure"
 check_dir_exists "gdb" | res="failure"
 check_dir_exists "newlib" | res="failure"
 check_dir_exists "cgen" | res="failure"
-check_dir_exists "sdk" | res="failure"
+check_dir_exists "$(basename "$sdkdir")" | res="failure"
 
 component_dirs="newlib gdb cgen binutils gcc"
 
@@ -861,7 +862,7 @@ fi
 component_dirs="${infra_dir} ${component_dirs}"
 
 # Checkout and pull repos if necessary
-if ! ${basedir}/sdk/get-versions.sh ${basedir} sdk/toolchain-components \
+if ! ${sdkdir}/get-versions.sh ${basedir} $(basename "${sdkdir}")/toolchain-components \
                                     ${logfile} ${auto_pull} \
                                     ${auto_checkout} ${do_release}
 then
@@ -917,7 +918,7 @@ then
   fi
 
   logterm "Creating unified source tree..."
-  if ! ${basedir}/sdk/symlink-all.sh "${basedir}/src" "${logfile}" \
+  if ! ${sdkdir}/symlink-all.sh "${basedir}/src" "${logfile}" \
            "${infra_exclude}" "${unisrc_dir}" "${component_dirs}"
   then
       logterm "ERROR: Failed to build unified source tree in ${unisrc_dir}."
