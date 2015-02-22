@@ -413,7 +413,7 @@ do_clean_host="--no-clean-host"
 auto_pull="--auto-pull"
 auto_checkout="--auto-checkout"
 rebuild_unisrc="--preserve-unisrc"
-unisrc_dir=${basedir}/unisrc-${RELEASE}
+unisrc_dir=${basedir}/src/unisrc-${RELEASE}
 jobs=
 load=
 do_gmp="--gmp"
@@ -783,6 +783,7 @@ fi
 # override earlier items.
 
 # First the main components, which we *must* have.
+pushd src
 res="success"
 check_dir_exists "gcc" | res="failure"
 check_dir_exists "binutils" | res="failure"
@@ -850,6 +851,8 @@ then
     check_dir_exists "gdb-multicore-sim" || res="failure"
 fi
 
+popd
+
 if [ "${res}" != "success" ]
 then
     failedbuild
@@ -914,7 +917,7 @@ then
   fi
 
   logterm "Creating unified source tree..."
-  if ! ${basedir}/sdk/symlink-all.sh "${basedir}" "${logfile}" \
+  if ! ${basedir}/sdk/symlink-all.sh "${basedir}/src" "${logfile}" \
            "${infra_exclude}" "${unisrc_dir}" "${component_dirs}"
   then
       logterm "ERROR: Failed to build unified source tree in ${unisrc_dir}."

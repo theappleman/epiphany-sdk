@@ -468,8 +468,11 @@ done
 
 d=`dirname "$0"`
 basedir=`(cd "$d/.." && pwd)`
-if ! cd "${basedir}"
+if cd "${basedir}"
 then
+    test -d src || mkdir -p src
+    pushd src
+else
     echo "ERROR: Unable to change to base directory for downloads/clones"
     exit 1
 fi
@@ -524,6 +527,8 @@ then
     other_component "ncurses" "ncurses-5.9" "tar.gz" \
 	"http://ftp.gnu.org/pub/gnu/ncurses" || res="fail"
 fi
+
+popd
 
 if [ "${res}" = "ok" ]
 then
