@@ -109,6 +109,7 @@ clone_tool() {
     tool=$1
     repo_url=$2
     branch=$3
+    origin=${4:-adapteva}
 
     # If old source exists, delete
     if [ ${force} = "true" ]
@@ -125,7 +126,7 @@ clone_tool() {
 	echo "${tool} already cloned." | tee -a ${log}
     else
 	echo "Cloning ${tool}..."
-	if ! git clone -q -o adapteva -b ${branch} ${repo_url} ${tool} \
+	if ! git clone -q -o ${origin} -b ${branch} ${repo_url} ${tool} \
 	         >> ${log} 2>&1
 	then
 	    echo "ERROR: Unable to clone ${tool}" | tee -a ${log}
@@ -213,6 +214,7 @@ github_tool () {
     repo=$2
     branch=$3
     release_prefix=$4
+    origin=${5:-adapteva}
 
     # If we're doing release we should use the release tags for all packages
     # and since we use multiple heads in epiphany-binutils-gdb we need separate
@@ -224,9 +226,9 @@ github_tool () {
 
     if [ ${clone} = "true" ]
     then
-	clone_tool "${tool}" "git://github.com/adapteva/${repo}" "${branch}"
+	clone_tool "${tool}" "git://github.com/${origin}/${repo}" "${branch}" ${origin}
     else
-	download_tool "${tool}" "https://github.com/adapteva/${repo}/archive" \
+	download_tool "${tool}" "https://github.com/${origin}/${repo}/archive" \
 	              "unzip" "${branch}.zip" "${repo}-${branch}"
     fi
 }
@@ -240,6 +242,7 @@ download_components() {
     # TODO: Some components might be optional and unnecessary to download.
 
     component=$1
+    origin=$2
 
     OLD_IFS=${IFS}
     IFS=$'\n' # We only want the newline character
@@ -252,7 +255,7 @@ download_components() {
 	repo=`          echo ${line} | cut -d ':' -f 3`
 	release_prefix=`echo ${line} | cut -d ':' -f 4`
 
-	if ! github_tool ${tool} ${repo} ${branch} ${release_prefix}
+	if ! github_tool ${tool} ${repo} ${branch} ${release_prefix} ${origin}
 	then
 	    res="fail"
 	    break
@@ -471,14 +474,17 @@ echo "Logging to ${log}"
 
 
 # Download all components defined in 'component-versions'
-for component in toolchain sdk
-do
-    if ! download_components ${component}
-    then
-        echo "ERROR: Failed to download ${component} components" | tee -a ${log}
-        exit 1
-    fi
-done
+if ! download_components toolchain
+then
+    echo "ERROR: Failed to download toolchain components" | tee -a ${log}
+    exit 1
+fi
+
+if ! download_components sdk parallella
+then
+    echo "ERROR: Failed to download sdk components" | tee -a ${log}
+    exit 1
+fi
 
 # Download optional GCC components
 # TODO: We want to define these outside of the download script, either in

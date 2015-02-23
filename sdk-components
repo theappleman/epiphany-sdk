@@ -28,6 +28,5 @@
 #
 
 # TODO: Move to basedir
-sdk/epiphany-libs:2015.1:epiphany-libs:epiphany-libs-
 sdk/parallella-linux:main:parallella-linux:parallella-linux-
 

@@ -36,6 +36,9 @@ cgen:epiphany-cgen-1.1-software-cache:epiphany-cgen:epiphany-cgen-
 # Epiphany Multicore simulator
 gdb-multicore-sim:epiphany-gdb-7.6-multicore-sim:epiphany-binutils-gdb:epiphany-gdb-multicore-sim-
 
+# SDK components
+epiphany-libs:2015.1:epiphany-libs:epiphany-libs-
+
 # At present we don't worry about the GCC infrastructure components being
 # pulled from git. Versions recorded as comments here.
 # gmp:gmp-4.3.2
