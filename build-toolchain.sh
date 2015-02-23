@@ -1145,7 +1145,7 @@ else
     logterm "Building Epiphany multicore simulator..."
 
     bd_gdb_multicore_sim="${bd_host}-gdb-multicore-sim"
-    gdb_multicore_sim_dir="${basedir}/gdb-multicore-sim"
+    gdb_multicore_sim_dir="${basedir}/src/gdb-multicore-sim"
     # Install into isolated directory so we don't clash with toolchain's GDB
     id_gdb_multicore_sim="${bd_gdb_multicore_sim}-install"
 
