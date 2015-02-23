@@ -448,7 +448,7 @@ fi
 # TODO: Move to basedir
 autopull="--auto-pull"
 autocheckout="--auto-checkout"
-if ! ${sdkdir}/get-versions.sh ${basedir}/src $(basename "$sdkdir")/sdk-components \
+if ! ${sdkdir}/get-versions.sh ${basedir} $(basename "$sdkdir")/sdk-components \
      ${logfile} ${auto_pull} ${auto_checkout} ${do_release}
 then
     echo "ERROR: Could not get correct versions of tools"
