@@ -477,7 +477,7 @@ echo "Logging to ${log}"
 # Download all components defined in 'component-versions'
 for component in toolchain sdk
 do
-    if ! download_components
+    if ! download_components ${component}
     then
         echo "ERROR: Failed to download ${component} components" | tee -a ${log}
         exit 1
