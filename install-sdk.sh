@@ -174,7 +174,7 @@ BSPS="zed_E16G3_512mb zed_E64G4_512mb parallella_E16G3_1GB"
 BSP="parallella_E16G3_1GB"
 
 # Default location of epiphany-libs.
-ESDK_LIBS="${basedir}/sdk/epiphany-libs"
+ESDK_LIBS="${basedir}/src/epiphany-libs"
 
 # The default branch for cloning/checkout
 BRANCH="master"
