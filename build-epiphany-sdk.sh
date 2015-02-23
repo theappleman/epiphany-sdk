@@ -237,14 +237,6 @@ if [ "$EPIPHANY_BUILD_TOOLCHAIN" != "no" ]; then
 	fi
 fi
 
-# TODO: Move to basedir
-if [ ! -d "$PARALLELLA_LINUX_HOME" ]; then
-	# Clone the parallella Linux source tree
-	git clone https://github.com/parallella/parallella-linux.git -b main
-
-	export PARALLELLA_LINUX_HOME=$PWD/parallella-linux
-fi
-
 
 # build the epiphany-libs and install the SDK
 # TODO: We shouldn't need to pass in ${RELEASE} and ${BRANCH} when we say
