@@ -239,11 +239,13 @@ download_components() {
     # TODO: ??? Move this to get-versions.sh
     # TODO: Some components might be optional and unnecessary to download.
 
+    component=$1
+
     OLD_IFS=${IFS}
     IFS=$'\n' # We only want the newline character
 
     res="ok"
-    egrep -v '^(#|$)' ${basedir}/sdk/toolchain-components | while read line
+    egrep -v '^(#|$)' ${basedir}/sdk/${component}-components | while read line
     do
 	tool=`          echo ${line} | cut -d ':' -f 1`
 	branch=`        echo ${line} | cut -d ':' -f 2`
@@ -469,11 +471,14 @@ echo "Logging to ${log}"
 
 
 # Download all components defined in 'component-versions'
-if ! download_components
-then
-    echo "ERROR: Failed to download components" | tee -a ${log}
-    exit 1
-fi
+for component in toolchain sdk
+do
+    if ! download_components
+    then
+        echo "ERROR: Failed to download ${component} components" | tee -a ${log}
+        exit 1
+    fi
+done
 
 # Download optional GCC components
 # TODO: We want to define these outside of the download script, either in
