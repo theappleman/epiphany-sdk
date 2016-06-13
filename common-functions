@@ -84,7 +84,7 @@ getarch () {
 
     if [ "x${arch}" = "xarm" ]
     then
-	arch="armv7l"
+	arch="armv7a"
     fi
 
     echo ${arch}
