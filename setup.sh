@@ -12,7 +12,7 @@ case $(uname -m) in
 		_esdk_arch=".x86_64"
 		;;
 	arm*)
-		_esdk_arch=".armv7l"
+		_esdk_arch=".armv7a"
 		;;
 	*)
 		_esdk_arch=""

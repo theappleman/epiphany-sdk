@@ -20,7 +20,7 @@ switch ( `uname -m` )
 		setenv _esdk_arch ".x86_64"
 		breaksw
 	case arm*:
-		setenv _esdk_arch ".armv7l"
+		setenv _esdk_arch ".armv7a"
 		breaksw
 	default:
 		setenv _esdk_arch ""
