@@ -257,6 +257,17 @@
 
 #     Defaults --gmp --mpfr --mpc --isl --cloog --ncurses.
 
+# --expat | --no-expat
+
+#     Indicate that the corresponding GDB infrastructure component exists as a
+#     source directory within the base directory and should be linked into the
+#     unified source directory.  With the "--no-" versions, indicate the
+#     component is not available as a source directory, and that the compiler
+#     should rely on the installed developer package for the relevant headers
+#     and libraries.
+
+#     Defaults --expat
+
 # --target-cflags <flags>
 
 #     Specify C flags to be used when building target libraries (libgcc.a,
@@ -347,10 +358,14 @@ do_mpc="--mpc"
 do_isl="--isl"
 do_cloog="--no-cloog"
 do_ncurses="--ncurses"
+do_expat="--expat"
 
 # The assembler and/or linker are broken so that constant merging doesn't
 # work.
-CFLAGS_FOR_TARGET="-O2 -g"
+CFLAGS_FOR_TARGET=${CFLAGS_FOR_TARGET:-"-O2 -g"}
+CXXFLAGS_FOR_TARGET=${CXXFLAGS_FOR_TARGET:-"-O2 -g"}
+CFLAGS=${CFLAGS:-"-O2 -g"}
+CXXFLAGS=${CXXFLAGS:-"-O2 -g"}
 config_extra=""
 disable_werror="--disable-werror"
 
@@ -475,6 +490,10 @@ case ${opt} in
 	do_ncurses="$1"
 	;;
 
+    --expat | --no-expat)
+	do_expat="$1"
+	;;
+
     --target-cflags)
 	shift
 	CFLAGS_FOR_TARGET="$1"
@@ -519,6 +538,7 @@ case ${opt} in
         echo "             [--isl | --no-isl]"
         echo "             [--cloog | --no-cloog]"
         echo "             [--ncurses | --no-ncurses]"
+        echo "             [--expat | --no-expat]"
         echo "             [--target-cflags <flags>]"
         echo "             [--config-extra <flags>]"
         echo "             [--disable-werror | --enable-werror]"
@@ -673,7 +693,11 @@ logonly "Use MPC source:                 ${do_mpc}"
 logonly "Use ISL source:                 ${do_isl}"
 logonly "Use Cloog source:               ${do_cloog}"
 logonly "Use ncurses source:             ${do_ncurses}"
+logonly "Use expat source:               ${do_expat}"
 logonly "Target CFLAGS:                  ${CFLAGS_FOR_TARGET}"
+logonly "Target CXXFLAGS:                ${CXXFLAGS_FOR_TARGET}"
+logonly "CFLAGS:                         ${CFLAGS}"
+logonly "CXXFLAGS:                       ${CXXFLAGS}"
 logonly "Extra config flags:             ${config_extra}"
 
 
@@ -772,6 +796,15 @@ then
 else
     infra_exclude="ncurses ${infra_exclude}"
 fi
+
+if [ "${do_expat}" = "--expat" ]
+then
+    check_dir_exists "gcc-infrastructure/expat" || res="failure"
+    infra_dir="gcc-infrastructure"
+else
+    infra_exclude="expat ${infra_exclude}"
+fi
+
 
 if [ "${res}" != "success" ]
 then
@@ -917,10 +950,16 @@ then
         # Configure the required components of the tool chain. We only need
         # binutils, as, ld and gcc. We need to temporarily move
         # CFLAGS_FOR_TARGET out of the way.
+	# Append -fPIC to CFLAGS. Needed for building simulator shared library.
 	logterm "Configuring build machine tool chain..."
 	OLD_CFLAGS_FOR_TARGET=${CFLAGS_FOR_TARGET}
 	CFLAGS_FOR_TARGET=
-	if ! "${unisrc_dir}/configure" --target=epiphany-elf \
+	OLD_CXXFLAGS_FOR_TARGET=${CXXFLAGS_FOR_TARGET}
+	CXXFLAGS_FOR_TARGET=
+	if ! "${unisrc_dir}/configure" \
+	    CFLAGS="${CFLAGS} -fPIC" \
+	    CXXFLAGS="${CXXFLAGS} -fPIC" \
+	    --target=epiphany-elf \
 	    --with-pkgversion="Epiphany toolchain ${RELEASE}" \
 	    --with-bugurl=support-sdk@adapteva.com \
 	    --enable-fast-install=N/A \
@@ -958,6 +997,8 @@ then
 	    logterm "Error: Failed to created tools for build machine."
 	    failedbuild
 	fi
+	CFLAGS_FOR_TARGET=${OLD_CFLAGS_FOR_TARGET}
+	CXXFLAGS_FOR_TARGET=${OLD_CXXFLAGS_FOR_TARGET}
     fi
 
     # We also first build ncurses in the case of cross compilation such a
@@ -979,6 +1020,7 @@ then
 	logterm "Building ncurses for host..."
 	if ! "${unisrc_dir}/ncurses/configure" ${host_str} --prefix="${staging_host}" \
 	    --without-progs --without-ada --without-manpages --without-tests \
+	    --with-abi-version=5 --with-shared \
 	    --with-terminfo-dirs="${staging_host}/install/share/terminfo:/usr/share/terminfo"\
 	    >> "${logfile}" 2>&1
 	then
@@ -998,13 +1040,55 @@ then
 	    failedbuild
 	fi
 
-	# We add the include and library paths to CFLAGS/LDFLAGS respectively to
-	# make them available for the real build.
-	CFLAGS="-I${staging_host}/include -I${destdir}${id_host}/include $CFLAGS"
-	LDFLAGS="-L${staging_host}/lib -L${destdir}${id_host}/lib $LDFLAGS"
-	export CFLAGS
-	export LDFLAGS
     fi
+
+    # We also first build expat in the case of cross compilation so a
+    # suitable XML library is available for GDB.
+    if [ "${do_expat}" = "--expat" ]
+    then
+	bd_expat="${bd_host}-expat"
+	rm -rf "${bd_expat}"
+	if ! mkdir -p "${bd_expat}"
+	then
+	    logterm "ERROR: Failed to create expat build directory."
+	fi
+
+	if ! cd "${bd_expat}"; then
+	    logterm "ERROR: Could not change to build directory ${bd_expat}."
+	    failedbuild
+	fi
+
+	logterm "Building expat for host..."
+	if ! "${unisrc_dir}/expat/configure" ${host_str} --prefix="${staging_host}" \
+	    >> "${logfile}" 2>&1
+	then
+	    logterm "ERROR: Unable to configure expat for host"
+	    failedbuild
+	fi
+
+	if ! make ${parallel} buildlib >> "${logfile}" 2>&1
+	then
+	    logterm "ERROR: Unable to build expat for host"
+	    failedbuild
+	fi
+
+	if ! make installlib >> "${logfile}" 2>&1
+	then
+	    logterm "ERROR: Unable to install expat for host"
+	    failedbuild
+	fi
+    fi
+
+    # We add the include and library paths to CFLAGS/CXXFLAGS/CPPFLAGS/LDFLAGS
+    # respectively to make them available for the real build.
+    CFLAGS="-I${staging_host}/include -I${destdir}${id_host}/include $CFLAGS"
+    CXXFLAGS="-I${staging_host}/include -I${destdir}${id_host}/include $CXXFLAGS"
+    CPPFLAGS="-I${staging_host}/include -I${destdir}${id_host}/include $CPPFLAGS"
+    LDFLAGS="-L${staging_host}/lib -L${destdir}${id_host}/lib $LDFLAGS"
+    export CFLAGS
+    export CXXFLAGS
+    export CPPFLAGS
+    export LDFLAGS
 fi
 
 
@@ -1040,13 +1124,21 @@ unset guile18
 
 # Configure the entire tool chain, but only if we are doing a clean build
 
+export CFLAGS_FOR_TARGET
+export CXXFLAGS_FOR_TARGET
+
 # @todo Should we enable Python support in GDB? If so do we need to check
 #       Python is available?
 if [ ${do_clean_host} = "--clean-host" ]
 then
     logterm "Configuring tool chain..."
-    export CFLAGS_FOR_TARGET
-    if ! "${unisrc_dir}/configure" --target=epiphany-elf ${host_str} \
+    # Append -fPIC to CFLAGS. Needed for building simulator shared library.
+    if ! "${unisrc_dir}/configure" \
+	CFLAGS_FOR_TARGET="${CFLAGS_FOR_TARGET}" \
+	CXXFLAGS_FOR_TARGET="${CXXFLAGS_FOR_TARGET}" \
+	CFLAGS="${CFLAGS} -fPIC" \
+	CXXFLAGS="${CXXFLAGS} -fPIC" \
+	--target=epiphany-elf ${host_str} \
 	--with-pkgversion="Epiphany toolchain ${RELEASE}" \
 	--with-bugurl=support-sdk@adapteva.com \
 	--enable-fast-install=N/A \
@@ -1153,15 +1245,15 @@ logterm "Ensure these directories are in your PATH and MANPATH"
 # Make the top level link if appropriate
 release_dir="esdk.${RELEASE}"
 if `echo ${id_host} | grep /opt/adapteva/${release_dir} > /dev/null 2>&1` &&
-    [ -d "/opt/adapteva/${release_dir}" ]
+    [ -d "${destdir}opt/adapteva/${release_dir}" ]
 then
-    cd /opt/adapteva
+    cd ${destdir}opt/adapteva
 
     if rm -f esdk && ln -s "${release_dir}" esdk
     then
-	logterm "Top level /opt/adapteva/esdk linked to /opt/adapteva/${release_dir}"
+	logterm "Top level ${destdir}opt/adapteva/esdk linked to ${destdir}opt/adapteva/${release_dir}"
     else
-	logterm "Unable to create link to /opt/adapteva/esdk"
+	logterm "Unable to create link to ${destdir}opt/adapteva/esdk"
     fi
 fi
 

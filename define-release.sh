@@ -41,8 +41,8 @@
 
 #   <year>.<month>[.<patch>]
 RELEASE_MAJOR="2016"
-RELEASE_MINOR="3"
-RELEASE_PATCH=".1"
+RELEASE_MINOR="11"
+RELEASE_PATCH=""
 
 # The full release version
 RELEASE="${RELEASE_MAJOR}.${RELEASE_MINOR}${RELEASE_PATCH}"
