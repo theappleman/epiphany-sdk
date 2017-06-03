@@ -409,7 +409,7 @@ case ${opt} in
 	;;
 
     --infra-uk)
-	infra_url="http://mirrors-uk.go-parts.com/gcc/infrastructure"
+	infra_url="https://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/infrastructure"
 	;;
 
     --infra-jp)
