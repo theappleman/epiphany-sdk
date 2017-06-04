@@ -369,7 +369,7 @@ force="false"
 clone="false"
 git_transport_prefix="https://github.com"
 
-infra_url="ftp://gcc.gnu.org/pub/gcc/infrastructure"
+infra_url="https://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/infrastructure"
 
 until
 opt=$1
